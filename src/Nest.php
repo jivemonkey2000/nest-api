@@ -1,4 +1,5 @@
 <?php
+namespace Gboudreau;
 
 define('DATE_FORMAT','Y-m-d');
 define('DATETIME_FORMAT', DATE_FORMAT . ' H:i:s');
