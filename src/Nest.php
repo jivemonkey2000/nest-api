@@ -82,7 +82,7 @@ class Nest {
             $password = PASSWORD;
         }
         if ($username === null || $password === null) {
-            throw new InvalidArgumentException('Nest credentials were not provided.');
+            throw new \InvalidArgumentException('Nest credentials were not provided.');
         }
         $this->username = $username;
         $this->password = $password;
@@ -109,7 +109,7 @@ class Nest {
                 $url .= ",$country_code";
             }
             $weather = $this->doGET($url);
-        } catch (RuntimeException $ex) {
+        } catch (\RuntimeException $ex) {
             // NESTAPI_ERROR_NOT_JSON_RESPONSE is kinda normal. The forecast API will often return a '502 Bad Gateway' response... meh.
             if ($ex->getCode() != NESTAPI_ERROR_NOT_JSON_RESPONSE) {
                 throw new \RuntimeException("Unexpected issue fetching forecast.", $ex->getCode(), $ex);
@@ -411,10 +411,10 @@ class Nest {
                     $timer = (int) $modes[1];
                 }
             } else {
-                throw new Exception("setFanMode(array \$mode[, ...]) needs at least a mode and a value in the \$mode array.");
+                throw new \Exception("setFanMode(array \$mode[, ...]) needs at least a mode and a value in the \$mode array.");
             }
         } else if (!is_string($mode)) {
-            throw new Exception("setFanMode() can only take a string or an array as it's first parameter.");
+            throw new \Exception("setFanMode() can only take a string or an array as it's first parameter.");
         }
         return $this->_setFanMode($mode, $duty_cycle, $timer, $serial_number);
     }
@@ -495,7 +495,7 @@ class Nest {
         $url = "/v3/mobile/" . $this->user;
         $status = $this->doGET($url);
         if (!is_object($status)) {
-            throw new RuntimeException("Error: Couldn't get status from NEST API: $status");
+            throw new \RuntimeException("Error: Couldn't get status from NEST API: $status");
         }
         if (@$status->cmd == 'REINIT_STATE') {
             if ($retry) {
@@ -504,7 +504,7 @@ class Nest {
                 $this->login();
                 return $this->getStatus(FALSE);
             }
-            throw new RuntimeException("Error: HTTP request to $url returned cmd = REINIT_STATE. Retrying failed.");
+            throw new \RuntimeException("Error: HTTP request to $url returned cmd = REINIT_STATE. Retrying failed.");
         }
         $this->last_status = $status;
         $this->saveCache();
@@ -733,26 +733,26 @@ class Nest {
                 }
                 return $this->doRequest($method, $url, $data_fields, !$with_retry);
             } else {
-                throw new RuntimeException("Error: HTTP request to $url returned an error: " . curl_error($ch), curl_errno($ch));
+                throw new \RuntimeException("Error: HTTP request to $url returned an error: " . curl_error($ch), curl_errno($ch));
             }
         }
         
         $json = json_decode($response);
         if (!is_object($json) && ($method == 'GET' || $url == self::login_url)) {
             if (strpos($response, "currently performing maintenance on your Nest account") !== FALSE) {
-                throw new RuntimeException("Error: Account is under maintenance; API temporarily unavailable.", NESTAPI_ERROR_UNDER_MAINTENANCE);
+                throw new \RuntimeException("Error: Account is under maintenance; API temporarily unavailable.", NESTAPI_ERROR_UNDER_MAINTENANCE);
             }
             if (empty($response)) {
-                throw new RuntimeException("Error: Received empty response from request to $url.", NESTAPI_ERROR_EMPTY_RESPONSE);
+                throw new \RuntimeException("Error: Received empty response from request to $url.", NESTAPI_ERROR_EMPTY_RESPONSE);
             }
-            throw new RuntimeException("Error: Response from request to $url is not valid JSON data. Response: " . str_replace(array("\n","\r"), '', $response), NESTAPI_ERROR_NOT_JSON_RESPONSE);
+            throw new \RuntimeException("Error: Response from request to $url is not valid JSON data. Response: " . str_replace(array("\n","\r"), '', $response), NESTAPI_ERROR_NOT_JSON_RESPONSE);
         }
 
         if ($info['http_code'] == 400) {
             if (!is_object($json)) {
-                throw new RuntimeException("Error: HTTP 400 from request to $url. Response: " . str_replace(array("\n","\r"), '', $response), NESTAPI_ERROR_API_OTHER_ERROR);
+                throw new \RuntimeException("Error: HTTP 400 from request to $url. Response: " . str_replace(array("\n","\r"), '', $response), NESTAPI_ERROR_API_OTHER_ERROR);
             }
-            throw new RuntimeException("Error: HTTP 400 from request to $url. JSON error: $json->error - $json->error_description", NESTAPI_ERROR_API_JSON_ERROR);
+            throw new \RuntimeException("Error: HTTP 400 from request to $url. JSON error: $json->error - $json->error_description", NESTAPI_ERROR_API_JSON_ERROR);
         }
 
         // No body returned; return a boolean value that confirms a 200 OK was returned.
