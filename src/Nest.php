@@ -566,6 +566,7 @@ class Nest {
             if (count($devices_serials) == 0) {
                 $devices_serials = $this->getDevices(DEVICE_TYPE_PROTECT);
             }
+            return $devices_serials[0];
         }
         return $serial_number;
     }
