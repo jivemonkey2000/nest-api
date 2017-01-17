@@ -566,7 +566,6 @@ class Nest {
             if (count($devices_serials) == 0) {
                 $devices_serials = $this->getDevices(DEVICE_TYPE_PROTECT);
             }
-            $serial_number = $devices_serials[0];
         }
         return $serial_number;
     }
@@ -630,6 +629,7 @@ class Nest {
     }
 
     private function use_cache() {
+        return false;
         return file_exists($this->cookie_file) && file_exists($this->cache_file) && !empty($this->cache_expiration) && $this->cache_expiration > time();
     }
     
